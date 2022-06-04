@@ -1,0 +1,149 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=9">
+  <style>
+	body{
+		background: black;
+		color: white;
+		cursor: default;
+		padding: 2px;
+		font: 16px Arial;
+		
+	}
+	@font-face{
+        font-family: "undertale";
+        src: url("data/fonts/undertale.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+	}
+	@font-face{
+		font-family: "PapyrusRus";
+		src: url("data/fonts/papyrus.ttf") format("truetype");
+		font-weight: normal;
+		font-style: normal;
+	}
+	.text{
+		font: 28px undertale;
+		color: white;
+	}
+	button{
+		font: 28px undertale;
+		color: white;
+		background: black;
+		border: none;
+		cursor: pointer;
+		margin: 4px;
+	}
+	button:hover{
+		color: yellow;
+	}
+  </style>
+  <title>UnderTale: Last Story</title>
+  <hta:application
+  	id=app
+  	applicationName="yellowapps.undertail.main"
+	icon="data/icon.ico"
+  	caption=yes
+	border=dialog
+  	innerBorder=yes 
+  	selection=no
+  	scroll=no
+  	contextmenu=no
+  	navigable=yes
+	maximizeButton=no />
+  <script>
+	var WScript = {
+
+		CreateObject: function(name){
+			return new ActiveXObject(name);
+		},
+
+		Sleep: function(time){
+			var d = Date.now();
+			while(Date.now() - d < time);				
+		},
+
+		Echo: function(txt){
+			alert(txt);
+		}
+	}
+
+	function resize(w, h){
+		winWidth = w;
+		winHeight = h;
+
+		window.resizeTo(winWidth, winHeight);
+		window.moveTo(screen.width / 2 - winWidth / 2, screen.height / 2 - winHeight / 2);
+	}
+
+	String.prototype.replaceAll = function(what, to){
+		return this.split(what).join(to);
+	}
+
+	String.prototype.includes = function(search, start){
+		if (typeof start !== 'number') {
+		  start = 0;
+		}
+
+		if (start + search.length > this.length) {
+		  return false;
+		} else {
+		  return this.indexOf(search, start) !== -1;
+		}
+	}
+
+	window.console = {
+		log: function(){}
+	}
+	resize(700, 550);
+  </script>
+</head>
+<body>
+	<center class="text">
+		Назовите наебнувшегося спиногрыза<br><br>
+		<div style="font-size: 150%" id="named">&nbsp;</div>
+		<div id="lttrs"></div>
+		<button id="save">Готово</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="bp">Стереть</button>
+	</center>
+	<script>
+		var fs = WScript.CreateObject("Scripting.FileSystemObject");
+		var shell = WScript.CreateObject("WScript.Shell");
+		
+		var name = "";
+		var abc = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_.";
+		abc = abc.split("");
+		
+		for(var i in abc){
+			lttrs.innerHTML += '<button onclick="addl(\'' + abc[i] + '\')">' + abc[i] + '</button>';
+			
+			if(i % 8 == 0) lttrs.innerHTML += "<br>";
+		}
+		
+		function addl(l){
+			if(named.innerHTML == "&nbsp;") named.innerHTML = "";
+			name += l;
+			named.innerHTML += l;
+		}
+		
+		save.onclick = function(){
+			var file0 = JSON.parse(fs.OpenTextFile("data/saves/file0.save", 1).ReadAll());
+			file0.name = name;
+			
+			var f = fs.OpenTextFile("data/saves/file0.save", 2);
+			f.Write(JSON.stringify(file0));
+			f.Close();
+			
+			shell.Run("main.hta");
+			window.close();
+		}
+		
+		bp.onclick = function(){
+			var namea = name.split("");
+			namea.pop();
+			name = namea.join("");
+			named.innerHTML = name;
+		}
+	</script>
+</body>
+</html>

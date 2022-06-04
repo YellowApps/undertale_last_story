@@ -1,0 +1,32 @@
+{
+	"spawn": [10, 10],
+	"objects": [
+		{
+			"type": "object",
+			"x": 400,
+			"y": 200,
+			"width": 100,
+			"height": 100,
+			"data": {"name": "save", "texture": "data/textures/object/save/save.gif"},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.save)) save()"
+		},
+		{
+			"type": "entity",
+			"x": 200,
+			"y": 100,
+			"width": 100,
+			"height": 100,
+			"data": {"name": "test", "texture": "data/textures/entity/test/test.png", "animation": {"left":["data/textures/entity/test/test.png","data/textures/entity/test/test.png"],"top":["data/textures/entity/test/test.png","data/textures/entity/test/test.png"],"right":["data/textures/entity/test/test.png","data/textures/entity/test/test.png"],"bottom":["data/textures/entity/test/test.png","data/textures/entity/test/test.png"]}},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.test)) dialog([['Привет'], ['...', 'Норм'], ['Я - фиолетовый куб.', 'Не знаю'], ['Пока. Увидимся позже!']], 'data/textures/entity/test/test.png', {0:['Привет', 'Как дела?'], 1:['Кто ты?','Почему ты фиолетовый?'],2:['Ясно']}, function(){Gl2Objects.test.move('top', 4, 10, 25)}, 70)"
+		},
+		{
+			"type": "object",
+			"x": 600,
+			"y": 300,
+			"width": 50,
+			"height": 100,
+			"data": {"name": "door1", "texture": "data/textures/object/test/test.png"},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.door1)) goToRoom('test2');"
+		}
+	]
+}

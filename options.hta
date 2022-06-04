@@ -1,0 +1,131 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=9">
+  <style>
+	body{
+		background: black;
+		color: white;
+		cursor: default;
+		padding: 2px;
+		font: 16px Arial;
+		
+	}
+	@font-face{
+        font-family: "undertale";
+        src: url("data/fonts/undertale.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+	}
+	@font-face{
+		font-family: "PapyrusRus";
+		src: url("data/fonts/papyrus.ttf") format("truetype");
+		font-weight: normal;
+		font-style: normal;
+	}
+	.text{
+		font: 28px undertale;
+		color: white;
+	}
+	button{
+		font: 28px undertale;
+		color: white;
+		background: black;
+		border: none;
+		cursor: pointer;
+	}
+	button:hover{
+		color: yellow;
+	}
+	.option:hover{
+		color: yellow;
+		cursor: pointer;
+	}
+	input, select, option{
+		border: none;
+		font: 24px undertale;
+		background: black;
+		color: white;
+	}
+  </style>
+  <title>UnderTale: Last Story</title>
+  <hta:application
+  	id=app
+  	applicationName="yellowapps.undertail.main"
+	icon="data/icon.ico"
+  	caption=yes
+	border=dialog
+  	innerBorder=yes 
+  	selection=no
+  	scroll=no
+  	contextmenu=no
+  	navigable=yes
+	maximizeButton=no />
+  <script>
+	var WScript = {
+
+		CreateObject: function(name){
+			return new ActiveXObject(name);
+		},
+
+		Sleep: function(time){
+			var d = Date.now();
+			while(Date.now() - d < time);				
+		},
+
+		Echo: function(txt){
+			alert(txt);
+		}
+	}
+
+	function resize(w, h){
+		winWidth = w;
+		winHeight = h;
+
+		window.resizeTo(winWidth, winHeight);
+		window.moveTo(screen.width / 2 - winWidth / 2, screen.height / 2 - winHeight / 2);
+	}
+
+	String.prototype.replaceAll = function(what, to){
+		return this.split(what).join(to);
+	}
+
+	String.prototype.includes = function(search, start){
+		if (typeof start !== 'number') {
+		  start = 0;
+		}
+
+		if (start + search.length > this.length) {
+		  return false;
+		} else {
+		  return this.indexOf(search, start) !== -1;
+		}
+	}
+
+	window.console = {
+		log: function(){}
+	}
+	resize(700, 550);
+  </script>
+</head>
+<body>
+	<button id="back">&lt; Назад</button>
+	<h1 class="text" style="text-align: center; font-size: 300%">НАСТРОЙКИ</h1>
+	<div style="padding: 23px;" class="text">
+		<!--<div style="clear: both; margin-bottom: 5px;">НАЗВАНИЕ<span class="option" style="float: right">ЗНАЧЕНИЕ</span></div>-->
+		<div style="clear: both; margin-bottom: 5px;">Язык<span class="option" style="float: right">Русский</span></div>
+		<div style="clear: both; margin-bottom: 5px;"><span class="option" style="float: right">ЗНАЧЕНИЕ</span></div>
+	</div>
+	<h1 style="visibility: hidden">padd</h1>
+	<center><button id="save" style="font-size: 42px;">Сохранить</button></center>
+	
+	<script>
+		var shell = WScript.CreateObject("WScript.Shell");
+		
+		back.onclick = function(){
+			shell.Run("menu.hta");
+			window.close();
+		}
+	</script>
+</body>
+</html>
