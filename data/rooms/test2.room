@@ -3,7 +3,7 @@
 	"objects": [
 		{
 			"type": "object",
-			"x": 10,
+			"x": 100,
 			"y": 10,
 			"width": 50,
 			"height": 100,
