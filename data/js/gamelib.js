@@ -2,14 +2,18 @@
 
 var Gl2Objects = {};
 
-function Gl2Canvas(name, bg, width, height){
+function Gl2Canvas(name, bg, width, height, rc){
   this.bgColor = bg; this.width = width; this.height = height;
 
   this.init = function(){
-    document.body.innerHTML += "<canvas id='" + name + "' width=" + width + " height=" + height + ">ERR_OLD_BROWSER</canvas>";
-    this.ctx = document.getElementById(name).getContext("2d");
-	this.elem = document.getElementById(name);
-
+    if(rc){
+		this.ctx = rc.getContext("2d");
+		this.elem = rc;
+	}else{
+		document.body.innerHTML += "<canvas id='" + name + "' width=" + width + " height=" + height + ">ERR_OLD_BROWSER</canvas>";
+		this.ctx = document.getElementById(name).getContext("2d");
+		this.elem = document.getElementById(name);
+	}
     var pfs = this.ctx.fillStyle;
     this.ctx.fillStyle = bg;
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -89,10 +93,10 @@ function Gl2Entity(x, y, w, h, d){
 
   ent.isCollided = function(r, o){
     if(r == "left"){
-      return (((this.x >= o.x + o.width) && (this.x <= o.x + o.height)) && ((this.y + this.height >= o.y) && (this.y <= o.y + o.height)));
+      return (((this.x <= o.x + o.width) && (this.x > o.x)) && ((this.y + this.height >= o.y) && (this.y <= o.y + o.height)));
     }
 	if(r == "right"){
-      return (((this.x + this.width >= o.x) && (this.x < o.x + o.width)) && ((this.y + this.height > o.y) && (this.y + this.height < o.y + o.height + o.height/2)));
+      return (((this.x + this.width >= o.x) && (this.x < o.x + o.width)) && ((this.y + this.height >= o.y) && (this.y <= o.y + o.height)));
     }
 	if(r == "top"){
       return (((this.y <= o.y + o.height) && (this.y > o.y)) && ((this.x + this.width > o.x) && (this.x < o.x + o.width)));
@@ -104,14 +108,21 @@ function Gl2Entity(x, y, w, h, d){
 		return (this.isCollided("left", o) || this.isCollided("right", o) || this.isCollided("top", o) || this.isCollided("bottom", o));
 	}
   }
-  ent.move = function(dir, pixels, delay, steps){
-    var collided = false;
+  
+  ent.move = function(dir, pixels, delay, steps, faft, fifc){
+    var collided = false, collobj = null;
     for(var i in Gl2Objects){
       if(Gl2Objects[i].name == this.name) continue;
       collided = this.isCollided(dir, Gl2Objects[i]);
-      if(collided) break;
+      if(collided){
+		  if(fifc) collobj = Gl2Objects[i];
+		  break;
+	  }
     }
-    if(collided) return;
+    if(collided){
+		if(fifc) fifc(this, collobj);
+		return;
+	}
 
     //if(this.binded) window.onkeypress = null;
 	
@@ -121,34 +132,34 @@ function Gl2Entity(x, y, w, h, d){
 		this.moveclick(this.x-pixels, this.y);
       this.canvas.ctx.fillStyle = this.canvas.bgColor;
       this.canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
-      this.x -= pixels;
+      if(this.x > 0) this.x -= pixels;
       this.canvas.ctx.drawImage(this.animation.left[0], this.x, this.y, this.width, this.height);
       var currObj = this;
-      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.left[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1); }, delay);
+      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.left[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1, faft, fifc); if(steps == 1 && faft) faft();}, delay);
     }else if(dir == "right"){
 		this.moveclick(this.x+pixels, this.y);
       this.canvas.ctx.fillStyle = this.canvas.bgColor;
       this.canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
-      this.x += pixels;
+      if(this.x + this.width < this.canvas.width) this.x += pixels;
       this.canvas.ctx.drawImage(this.animation.right[0], this.x, this.y, this.width, this.height);
       var currObj = this;
-      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.right[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1);}, delay);
+      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.right[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1, faft, fifc); if(steps == 1 && faft) faft();}, delay);
     }else if(dir == "top"){
 		this.moveclick(this.x, this.y-pixels);
       this.canvas.ctx.fillStyle = this.canvas.bgColor;
       this.canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
-      this.y -= pixels;
+      if(this.y > 0) this.y -= pixels;
       this.canvas.ctx.drawImage(this.animation.top[0], this.x, this.y, this.width, this.height);
       var currObj = this;
-      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.top[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1);}, delay);
+      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.top[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1, faft, fifc); if(steps == 1 && faft) faft();}, delay);
     }else if(dir == "bottom") {
 		this.moveclick(this.x, this.y+pixels);
       this.canvas.ctx.fillStyle = this.canvas.bgColor;
       this.canvas.ctx.fillRect(this.x, this.y, this.width, this.height);
-      this.y += pixels;
+      if(this.y + this.height < this.canvas.height) this.y += pixels;
       this.canvas.ctx.drawImage(this.animation.bottom[0], this.x, this.y, this.width, this.height);
       var currObj = this;
-      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.bottom[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1); }, delay);
+      setTimeout(function(){ currObj.canvas.ctx.drawImage(currObj.animation.bottom[1], currObj.x, currObj.y, currObj.width, currObj.height);binder(currObj); if(steps > 1) currObj.move(dir, pixels, delay, steps-1, faft, fifc); if(steps == 1 && faft) faft();}, delay);
     }
   }
 
@@ -162,7 +173,11 @@ function Gl2Entity(x, y, w, h, d){
       if(e.key == keys.bottom) currObj.move("bottom", pixels, delay);
     }
   }
-
+	
+	ent.unbind = function(){
+		window.onkeypress = null;
+	}
+	
   ent.kill = function(){
     delete Gl2Objects[this.name];
 

@@ -33,7 +33,6 @@
 		background: black;
 		border: none;
 		cursor: pointer;
-		margin: 4px;
 	}
 	button:hover{
 		color: yellow;
@@ -100,52 +99,38 @@
   </script>
 </head>
 <body>
-	<center class="text">
-		Назовите наебнувшегося спиногрыза<br><br>
-		<div style="font-size: 150%" id="named">&nbsp;</div>
-		<div id="lttrs"></div>
-		<button id="save">Готово</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="bp">Стереть</button>
-	</center>
+	<img src="data/textures/interface/gameover.png" width=700 height=300 ondrag="return false">
+	<div class="text" id="txt" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 	<script>
-		var fs = WScript.CreateObject("Scripting.FileSystemObject");
 		var shell = WScript.CreateObject("WScript.Shell");
+		var fs = WScript.CreateObject("Scripting.FileSystemObject");
 		
-		var name = "";
-		var abc = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_.";
-		abc = abc.split("");
+		var a = new Audio("data/music/gameover.mp3");
+		a.loop = true;
+		a.play();
 		
-		for(var i in abc){
-			lttrs.innerHTML += '<button onclick="addl(\'' + abc[i] + '\')">' + abc[i] + '</button>';
-			
-			if(i % 8 == 0) lttrs.innerHTML += "<br>";
-		}
+		var spl = ["NAME, ну ты и лошара!!!!", "NAME! Оставайся решительным!", "NAME! у тебя бомбит, не так ли >:)", "NAME... Ты не можешь сдаться сейчас!", "Теперь моя очередь играть!", "NAME, ты уже задолбал умирать"];
+		var rs = spl[Math.floor(Math.random()*spl.length)];
+		var name = JSON.parse(fs.OpenTextFile("data/saves/file1.save", 1).ReadAll()).name;
+		rs = rs.replaceAll("NAME", name);
 		
-		function addl(l){
-			if(named.innerHTML == "&nbsp;") named.innerHTML = "";
-			if(named.innerHTML.length > 11) return;
-			name += l;
-			named.innerHTML += l;
-		}
+		try{
+			fs.DeleteFile("data/saves/file9.save");
+		}catch(e){}
 		
-		save.onclick = function(){
-			var file0 = JSON.parse(fs.OpenTextFile("data/saves/file0.save", 1).ReadAll());
-			file0.name = name;
-			
-			var f = fs.OpenTextFile("data/saves/file0.save", 2);
-			f.Write(JSON.stringify(file0));
-			f.Close();
-			
-			shell.Run("main.hta");
-			window.close();
-		}
-		
-		bp.onclick = function(){
-			var namea = name.split("");
-			namea.pop();
-			name = namea.join("");
-			if(name == "" || name == "&nbsp;") name = "&nbsp;";
-			named.innerHTML = name;
-		}
+		var i = 0;
+		setTimeout(function _(){
+			if(i >= rs.length){
+				setTimeout(function(){
+					shell.Run("main.hta");
+					window.close();
+				}, 4000);
+			}else{
+				txt.innerHTML += rs[i];
+				i++;
+				setTimeout(_, 100);
+			}
+		}, 100);
 	</script>
 </body>
 </html>

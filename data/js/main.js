@@ -13,7 +13,7 @@ canvas.init();
 //БЛОК SAVE-ФАЙЛОВ
 //файл не найден
 if(!fs.FileExists("data/saves/file1.save")){
-	fs.CopyFile("data/saves/file0.save", "data\\saves/file1.save", true);
+	fs.CopyFile("data/saves/file0.save", "data/saves/file1.save", true);
 }
 //парсинг файла
 var file = JSON.parse(fs.OpenTextFile("data/saves/file1.save", 1).ReadAll());
@@ -22,16 +22,25 @@ if(fs.FileExists("data/saves/file9.save")){
 	var tf = fs.OpenTextFile("data/saves/file9.save")
 	window.tmpsave = JSON.parse(tf.ReadAll());
 	tf.Close();
-	file.room = tmpsave.room;
+	for(var i in tmpsave){
+		if(i == "isRoom") continue;
+		file[i] = tmpsave[i];
+	}
 	
-	setTimeout(function(){ fs.DeleteFile("data/saves/file9.save", true); }, 1000);
+	setTimeout(function(){ fs.DeleteFile("data/saves/file9.save", true); }, 300);
 }
 
 var room = JSON.parse(fs.OpenTextFile("data/rooms/" + file.room + ".room", 1).ReadAll());
 
-if(window.tmpsave){
+if(window.tmpsave && window.tmpsave.isRoom){
 	file.x = room.spawn[0];
 	file.y = room.spawn[1];
+}
+
+if(room.music){
+	var a = new Audio(room.music);
+	a.loop = true;
+	a.play();
 }
 
 for(var i in room.objects){
@@ -55,7 +64,7 @@ for(var i in room.objects){
 var player = new Gl2Entity(file.x, file.y, 75, 75, {name: "player", texture: "data/textures/entity/player/player.png", health: file.health, animation: {left: ["data/textures/entity/player/animation/left1.png","data/textures/entity/player/animation/left2.png"], top: ["data/textures/entity/player/animation/top1.png","data/textures/entity/player/animation/top2.png"], right: ["data/textures/entity/player/animation/right1.png","data/textures/entity/player/animation/right2.png"], bottom: ["data/textures/entity/player/animation/bottom1.png","data/textures/entity/player/animation/bottom2.png"]}});
 player.loadAnimations();
 player.draw(canvas);
-player.bind({left:"a",top:"w",right:"d",bottom:"s"}, 4, 10);
+player.bind({left:"a",top:"w",right:"d",bottom:"s"}, 3, 400);
 
 //БЛОК ФУНКЦИЙ
 function message(text, dur){
@@ -123,10 +132,21 @@ function dialog(texts, img, btns, faft, delay){
 
 function goToRoom(name){
 	file.room = name;
-	
+	file.isRoom = true;
 	var f = fs.CreateTextFile("data/saves/file9.save", true);
 	f.Write(JSON.stringify(file));
 	f.Close();
 	
 	location.reload();
+}
+
+function battle(name){
+	var f = fs.CreateTextFile("data/saves/file9.save", true);
+	f.Write(JSON.stringify(file));
+	f.Close();
+
+	setTimeout(function(){
+		shell.Run('cmd /c "battle.hta '+name+'"', 0);
+		window.close();
+	}, 400);
 }

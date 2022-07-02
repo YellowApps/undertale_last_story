@@ -1,5 +1,5 @@
 {
-	"spawn": [10, 10],
+	"spawn": [500, 300],
 	"objects": [
 		{
 			"type": "object",
@@ -27,6 +27,15 @@
 			"height": 100,
 			"data": {"name": "door1", "texture": "data/textures/object/test/test.png"},
 			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.door1)) goToRoom('test2');"
+		},
+		{
+			"type": "object",
+			"x": 500,
+			"y": 100,
+			"width": 130,
+			"height": 130,
+			"data": {"name": "temmie_battle", "texture": "data/textures/entity/temmie/temmie.png"},
+			"onclick": "if(true || Gl2Objects.player.isCollided('any', Gl2Objects.temmie_battle)) battle('temmie');"
 		}
 	]
 }

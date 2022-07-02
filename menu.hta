@@ -116,6 +116,10 @@
 		menu.style.display = "none";
 		img0.style.display = "block;"
 		
+		var a = new Audio("data/music/menu.mp3");
+		a.loop = true;
+		a.play();
+		
 		var img = 1;
 		setTimeout(function _(){
 			img0.src = "data/textures/interface/bg" + img + ".png";

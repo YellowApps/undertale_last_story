@@ -1,0 +1,26 @@
+{
+	"name": "test",
+	"texture": "data/textures/entity/test/test.png",
+	"music": "data/music/battle1.mp3",
+	"texts": ["ТестМонстр заблокировал вам дорогу!", "Это тест диалога.", "А это ещё один тест диалога."],
+	"hp": 200,
+	"atk": 10,
+	"toSpare": 1,
+	"atkDelay": 10,
+	"attacks": [
+		[
+			{"texture": "data/textures/entity/test/test.png", "size": [20, 80], "pos": [0, 0], "dir": "right", "steps": 200, "speed": 1},
+			{"texture": "data/textures/entity/test/test.png", "size": [20, 80], "pos": [180, 150], "dir": "left", "steps": 200, "speed": 1}
+		],
+		[
+			{"texture": "data/textures/entity/test/test2.png", "size": [100, 20], "pos": [0, 0], "dir": "bottom", "steps": 80, "speed": 2},
+			{"texture": "data/textures/entity/test/test2.png", "size": [100, 20], "pos": [100, 140], "dir": "top", "steps": 80, "speed": 2}
+		]
+	],
+	"actions": [
+		{"name": "+0 к sprareVal", "val": 0, "text": "0"},
+		{"name": "+1 к spareVal", "val": 1, "text": "+1"},
+		{"name": "-1 к spareVal", "val": -1, "text": "-1"}
+	],
+	"drop": {"exp": 10, "gold": 20}
+}

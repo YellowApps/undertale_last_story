@@ -1,0 +1,400 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=9">
+  <style>
+	body{
+		background: black;
+		color: white;
+		cursor: default;
+		padding: 2px;
+		font: 16px Arial;
+		
+	}
+	@font-face{
+        font-family: "undertale";
+        src: url("data/fonts/undertale.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+	}
+	@font-face{
+        font-family: "damage";
+        src: url("data/fonts/dmgnums.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+	}
+	@font-face{
+		font-family: "PapyrusRus";
+		src: url("data/fonts/papyrus.ttf") format("truetype");
+		font-weight: normal;
+		font-style: normal;
+	}
+	.text{
+		font: 28px undertale;
+		color: white;
+	}
+	.battlebtn{
+		font: 28px undertale;
+		color: orange;
+		border: solid 4px orange;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		margin: 20px;
+		cursor: pointer;
+	}
+	.battlebtn:hover{
+		font: 28px undertale;
+		color: yellow;
+		border: solid 4px yellow;
+	}
+	button{
+		font: 28px undertale;
+		color: white;
+		background: black;
+		border: none;
+		cursor: pointer;
+	}
+	button:hover{
+		color: yellow;
+	}
+  </style>
+  <title>UnderTale: Last Story</title>
+  <hta:application
+  	id=app
+  	applicationName="yellowapps.undertail.main"
+	icon="data/icon.ico"
+  	caption=yes
+	border=dialog
+  	innerBorder=yes 
+  	selection=no
+  	scroll=no
+  	contextmenu=no
+  	navigable=yes
+	maximizeButton=no />
+  <script>
+	var WScript = {
+
+		CreateObject: function(name){
+			return new ActiveXObject(name);
+		},
+
+		Sleep: function(time){
+			var d = Date.now();
+			while(Date.now() - d < time);				
+		},
+
+		Echo: function(txt){
+			alert(txt);
+		}
+	}
+
+	function resize(w, h){
+		winWidth = w;
+		winHeight = h;
+
+		window.resizeTo(winWidth, winHeight);
+		window.moveTo(screen.width / 2 - winWidth / 2, screen.height / 2 - winHeight / 2);
+	}
+
+	String.prototype.replaceAll = function(what, to){
+		return this.split(what).join(to);
+	}
+
+	String.prototype.includes = function(search, start){
+		if (typeof start !== 'number') {
+		  start = 0;
+		}
+
+		if (start + search.length > this.length) {
+		  return false;
+		} else {
+		  return this.indexOf(search, start) !== -1;
+		}
+	}
+
+	window.console = {
+		log: function(){}
+	}
+	resize(700, 550);
+  </script>
+</head>
+<body><br>
+	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 150px ;margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
+		<table><tr>
+			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80 ondrag="return false">&nbsp;&nbsp;</td><td id="dlgtxt"></td>
+		</tr></table>
+		<div id="dlgbtns" style="text-align: center"></div>
+	</div>
+	<div style="display: none; background: black; z-index: 9998; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 150px ;margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="bttld">
+		<img onclick="damage()" src="data/textures/interface/battle/battleBg.png" width=610 height=160 ondrag="return false">
+		<div style="position: absolute; border: solid 2px black; width: 20px; height: 160px; left: 10px; top: 0px; background: white;" id="bttlpb"></div>
+	</div>
+	<center>
+		<div id="damagen" style="font: 36px damage; color: red;">&nbsp;</div>
+		<img id="imgm" src="data/textures/entity/test/test.png" width=130 height=130 ondrag="return false"><br><br>
+		<canvas id="main" width=200 height=160 style="border: solid 4px white;"></canvas>
+		<div class="text"><span id="pname">GOVNOED22</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ОЗ: </span><span id="hp">0</span></div>
+	</center><br>
+	<span class="battlebtn" id="btnfig">БИТВА</span><span class="battlebtn" id="btnact">ДЕЙСТВ</span><span class="battlebtn" id="btnitems">ВЕЩИ</span><span class="battlebtn" id="btnspare">ПОЩАДА</span>
+	<script src="data/js/gamelib.js"></script>
+	<script>
+
+		function dialog(texts, btns, funcs, faft, delay, dbl){
+			var i = 0;
+			window.text = texts[0][0];
+			dlg.style.display = "block";
+			dlg.onclick = null;
+			
+			function showText(){
+				dlgtxt.innerHTML = "";
+				
+				var a = 0;
+				window.selbtn = 0;
+				setTimeout(function _(){
+					dlgbtns.innerHTML = "";
+					dlgtxt.innerHTML += window.text[a];
+					
+					if(dlgtxt.innerHTML.length < window.text.length){
+						a++;
+						setTimeout(_, delay);
+					}else{
+						if(btns[i]){
+							for(var j in btns[i]){
+								var btn = btns[i][j];
+								window.texts = texts;
+								if(funcs[i] && !dbl){
+									dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='"+funcs[i][j]+"'>"+btn+"</button>";
+								}else if(funcs[i] && dbl){
+									dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='window.text = window.texts["+(i+1)+"]["+j+"]; "+funcs[i][j]+"'>"+btn+"</button>";
+								}else{
+									dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='window.text = window.texts["+(i+1)+"]["+j+"]'>"+btn+"</button>";
+								}
+							}
+						}
+
+						i++;
+
+						if(i >= texts.length){
+							dlg.onclick = function(){ dlg.style.display = "none"; faft(); };
+						}else{
+							if(!btns[i]) window.text = texts[i][0];
+							dlg.onclick = showText;
+						}
+						
+						a = 0;
+						window.selbtn = 0;
+					}
+				}, delay);
+			}
+			showText();
+		}
+		
+	</script>
+	<script>
+		var a1 = app.commandLine.split("\\");
+		var a2 = a1[a1.length-1];
+		var args = a2.split(" ");
+		args.shift();
+		args.shift();
+		
+		var shell = WScript.CreateObject("WScript.Shell");
+		var fs = WScript.CreateObject("Scripting.FileSystemObject");
+		
+		var pf = JSON.parse(fs.OpenTextFile("data/saves/file9.save", 1).ReadAll());
+		var batt = JSON.parse(fs.OpenTextFile("data/battle/"+args[0]+".json", 1).ReadAll());
+		
+		var itemsf = fs.OpenTextFile("data/saves/items.json", 1);
+		var items = JSON.parse(itemsf.ReadAll());
+		itemsf.Close();
+		
+		var aud = new Audio(batt.music);
+		aud.loop = true;
+		aud.play();
+		
+		var btnsdis = true;
+		var spareVal = 0;
+		var isAct = false;
+		
+		dialog([[batt.texts[0]]], {}, {}, function(){ window.btnsdis = false; batt.texts.shift(); }, 70);
+		
+		pname.innerHTML = pf.name;
+		hp.innerHTML = pf.health;
+		imgm.src = batt.texture;
+		
+		var cnv = new Gl2Canvas("", "black", 200, 160, document.getElementById("main"));
+		cnv.init();
+		
+		var player = new Gl2Entity(100, 80, 20, 20, {name: "player", texture: "data/textures/interface/battle/heart.png", health: pf.health, animation: {left: ["data/textures/interface/battle/heart.png","data/textures/interface/battle/heart.png"], top: ["data/textures/interface/battle/heart.png","data/textures/interface/battle/heart.png"], right: ["data/textures/interface/battle/heart.png","data/textures/interface/battle/heart.png"], bottom: ["data/textures/interface/battle/heart.png","data/textures/interface/battle/heart.png"]}});
+		player.loadAnimations();
+		player.draw(cnv);
+		
+		btnfig.onclick = function(){
+			if(btnsdis) return;
+			
+			battle();
+		}
+		
+		btnact.onclick = function(){
+			if(btnsdis) return;
+			isAct = true;
+			
+			var actns = ["ОК"], actvls = [0], acttxts = ["..."];
+			
+			for(var i in batt.actions){
+				actns.push(batt.actions[i].name);
+				if(batt.actions[i].code){
+					actvls.push(batt.actions[i].code+"; spareVal += "+batt.actions[i].val);
+				}else{
+					actvls.push("spareVal += "+batt.actions[i].val);
+				}
+				acttxts.push(batt.actions[i].text);
+			}
+			
+			dialog([[batt.name+" - ОЗ "+batt.hp+" АТК "+batt.atk], acttxts], {0:actns}, {0:actvls}, attack, 70, true);
+		}
+		
+		btnitems.onclick = function(){
+			if(btnsdis) return;
+			
+			var itns = [], itvls = [];
+			
+			for(var i in items){
+				itns.push(items[i].name);
+				itvls.push("pf.health += "+items[i].heal+"; hp.innerHTML = pf.health; items.splice("+i+", 1); setItems();");
+			}
+			
+			dialog([["Ваши вещи:"]], {0:itns}, {0: itvls}, attack, 70);
+		}
+		
+		btnspare.onclick = function(){
+			if(btnsdis) return;
+			
+			if(spareVal >= batt.toSpare){
+				dialog([[" "], [" "]], {0:["Пощадить"]}, {0:["setTimeout(function(){end(2)}, 20);"]}, function(){}, 70, true);
+			}else{
+				dialog([[" "]], {}, {}, attack, 70, false);
+			}
+		}
+		
+		function attack(){
+			if(isAct){
+				isAct = false;
+				attack1();
+			}else{
+				var txt = batt.texts[Math.floor(Math.random()*batt.texts.length)];
+				
+				dialog([[txt]], {}, {}, attack1, 70, false);
+			}
+		}
+		
+		function attack1(){
+			if(!batt.attacks) return;
+			btnsdis = true;
+			
+			player.canvas.ctx.fillStyle = "black";
+			player.canvas.ctx.fillRect(player.x, player.y, player.width, player.height);
+			player.x = 100; player.y = 80;
+			player.draw(cnv);
+			player.bind({left:"a",top:"w",right:"d",bottom:"s"}, 4, 10);
+			
+			var ats = batt.attacks[Math.floor(Math.random()*batt.attacks.length)];
+			
+			var i = 0;
+			setTimeout(function _(){
+				var at = ats[i];
+				var ate = new Gl2Entity(at.pos[0], at.pos[1], at.size[0], at.size[1], {name: "ATTACK_"+new Date().getTime(), health: 1, texture: at.texture, animation:{left: [at.texture, at.texture], top: [at.texture, at.texture], right: [at.texture, at.texture], bottom: [at.texture, at.texture]}});
+				ate.loadAnimations();
+				ate.draw(cnv);
+			
+				ate.move(at.dir, at.speed, 20, at.steps, function(){ ate.kill() }, function(t, o){
+					if(o.name == "player"){
+						pdamage();
+						t.kill();
+					}
+				});
+				
+				i++;
+				if(i < ats.length){
+					setTimeout(_, batt.atkDelay);
+				}else{
+					btnsdis = false;
+				}
+			}, batt.atkDelay);
+		}
+		
+		function battle(){
+			bttld.style.display = "block";
+			
+			var p = 10, php = batt.hp;
+			setTimeout(function _(){
+				bttlpb.style.left = p+"px";
+				if(p > 660 || batt.hp != php){
+					setTimeout(attack, 700);
+				}else{
+					setTimeout(_, 30);
+				}
+				p+=5;
+			}, 30);
+		}
+		
+		function damage(){
+			var pos = +bttlpb.style.left.replace("px","");
+			var dmg = Math.floor(Math.abs(Math.abs(pos - 350)/pf.atk - pf.atk));
+			bttld.style.display = "none";
+			batt.hp -= dmg;
+			damagen.innerHTML = dmg;
+			main.style.visibility = "hidden";
+			
+			setTimeout(function(){
+				damagen.innerHTML = "&nbsp;";
+				main.style.visibility = "visible";
+				if(batt.hp <= 0 && !batt.detemmienation){
+					end(1);
+				}
+			}, 1500);
+		}
+		
+		function pdamage(){
+			player.health -= batt.atk;
+			hp.innerHTML = player.health;
+			
+			if(player.health <= 0 && !pf.detemmienation) end(0);
+		}
+		
+		function setItems(){
+			var fl = fs.OpenTextFile("data/saves/items.json", 2);
+			fl.Write(JSON.stringify(items));
+			fl.Close();
+		}
+		
+		function end(n){
+			if(n == 0){
+				shell.Run("gameover.hta");
+				window.close();
+			}else if(n == 1){
+				pf.kills++;
+				pf.exp += batt.drop.exp;
+				pf.gold += batt.drop.gold;
+				if(pf.ending == "pacifist") pf.ending = "neutral";
+				var fl = fs.OpenTextFile("data/saves/file9.save", 2);
+				fl.Write(JSON.stringify(pf));
+				fl.Close();
+				
+				dialog([["Вы победили!"], ["Получено "+batt.drop.exp+" EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
+			}else if(n == 2){
+				pf.gold += batt.drop.gold;
+				if(pf.ending == "genocide") pf.ending = "neutral";
+				var fl = fs.OpenTextFile("data/saves/file9.save", 2);
+				fl.Write(JSON.stringify(pf));
+				fl.Close();
+				
+				setTimeout(function(){
+					dialog([["Вы победили!"], ["Получено 0 EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
+				}, 500);
+			}
+		}
+	</script>
+</body>
+</html>
