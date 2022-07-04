@@ -121,21 +121,21 @@
   </script>
 </head>
 <body><br>
-	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 150px ;margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
-		<table><tr>
-			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80 ondrag="return false">&nbsp;&nbsp;</td><td id="dlgtxt"></td>
+	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 170px; margin: 10px; padding: 0px; font: 34px undertale; border: solid 3px white;" id="dlg">
+		<table style="margin: 0px; "><tr>
+			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80 ondrag="return false">&nbsp;&nbsp;</td><td id="dlgtxtr"><pre id="dlgtxt" style="font: 34px undertale; color: white; background: black;"></pre></td>
 		</tr></table>
-		<div id="dlgbtns" style="text-align: center"></div>
+		<div id="dlgbtns" style="text-align: center; position: absolute; left: 20px; top: 116px;"></div>
 	</div>
-	<div style="display: none; background: black; z-index: 9998; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 150px ;margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="bttld">
+	<div style="display: none; background: black; z-index: 9998; cursor: pointer; position: absolute; left: 10px; top: 200px; width: 610px; height: 156px ;margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="bttld">
 		<img onclick="damage()" src="data/textures/interface/battle/battleBg.png" width=610 height=160 ondrag="return false">
-		<div style="position: absolute; border: solid 2px black; width: 20px; height: 160px; left: 10px; top: 0px; background: white;" id="bttlpb"></div>
+		<div style="position: absolute; border: solid 2px black; width: 20px; height: 180px; left: 10px; top: 0px; background: white;" id="bttlpb"></div>
 	</div>
 	<center>
 		<div id="damagen" style="font: 36px damage; color: red;">&nbsp;</div>
 		<img id="imgm" src="data/textures/entity/test/test.png" width=130 height=130 ondrag="return false"><br><br>
-		<canvas id="main" width=200 height=160 style="border: solid 4px white;"></canvas>
-		<div class="text"><span id="pname">GOVNOED22</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ОЗ: </span><span id="hp">0</span></div>
+		<canvas id="main" width=200 height=160 style="border: solid 4px white; visibility: hidden;"></canvas>
+		<div class="text"><span id="pname">GOVNOED228</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ОЗ: </span><span id="hp">0</span></div>
 	</center><br>
 	<span class="battlebtn" id="btnfig">БИТВА</span><span class="battlebtn" id="btnact">ДЕЙСТВ</span><span class="battlebtn" id="btnitems">ВЕЩИ</span><span class="battlebtn" id="btnspare">ПОЩАДА</span>
 	<script src="data/js/gamelib.js"></script>
@@ -201,6 +201,7 @@
 		
 		var shell = WScript.CreateObject("WScript.Shell");
 		var fs = WScript.CreateObject("Scripting.FileSystemObject");
+		var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
 		
 		var pf = JSON.parse(fs.OpenTextFile("data/saves/file9.save", 1).ReadAll());
 		var batt = JSON.parse(fs.OpenTextFile("data/battle/"+args[0]+".json", 1).ReadAll());
@@ -211,6 +212,7 @@
 		
 		var aud = new Audio(batt.music);
 		aud.loop = true;
+		aud.volume = options.volume;
 		aud.play();
 		
 		var btnsdis = true;
@@ -222,6 +224,14 @@
 		pname.innerHTML = pf.name;
 		hp.innerHTML = pf.health;
 		imgm.src = batt.texture;
+			
+		if(batt.buttons){
+			var btns = ["btnfig", "btnact", "btnitems", "btnspare"];
+			for(var i in btns){
+				var btn = btns[i];
+				if(!batt.buttons[i]) document.getElementById(btn).style.visibility = "hidden";
+			}
+		}
 		
 		var cnv = new Gl2Canvas("", "black", 200, 160, document.getElementById("main"));
 		cnv.init();
@@ -252,20 +262,22 @@
 				acttxts.push(batt.actions[i].text);
 			}
 			
-			dialog([[batt.name+" - ОЗ "+batt.hp+" АТК "+batt.atk], acttxts], {0:actns}, {0:actvls}, attack, 70, true);
+			dialog([[(batt.hideInformation?batt.informationReplacement:(batt.name+" - ОЗ "+batt.hp+" АТК "+batt.atk))+"\n"+batt.description], acttxts], {0:actns}, {0:actvls}, attack, 70, true);
 		}
 		
 		btnitems.onclick = function(){
 			if(btnsdis) return;
+			isAct = true;
 			
-			var itns = [], itvls = [];
+			var itns = [], itvls = [], ittxts = [];
 			
 			for(var i in items){
 				itns.push(items[i].name);
 				itvls.push("pf.health += "+items[i].heal+"; hp.innerHTML = pf.health; items.splice("+i+", 1); setItems();");
+				ittxts.push(items[i].text);
 			}
 			
-			dialog([["Ваши вещи:"]], {0:itns}, {0: itvls}, attack, 70);
+			dialog([["Ваши вещи:"], ittxts], {0:itns}, {0: itvls}, attack, 70, true);
 		}
 		
 		btnspare.onclick = function(){
@@ -291,7 +303,8 @@
 		
 		function attack1(){
 			if(!batt.attacks) return;
-			btnsdis = true;
+			window.btnsdis = true;
+			main.style.visibility = "visible";
 			
 			player.canvas.ctx.fillStyle = "black";
 			player.canvas.ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -319,7 +332,8 @@
 				if(i < ats.length){
 					setTimeout(_, batt.atkDelay);
 				}else{
-					btnsdis = false;
+					window.btnsdis = false;
+					
 				}
 			}, batt.atkDelay);
 		}
@@ -353,7 +367,7 @@
 				if(batt.hp <= 0 && !batt.detemmienation){
 					end(1);
 				}
-			}, 1500);
+			}, 700);
 		}
 		
 		function pdamage(){
@@ -369,6 +383,17 @@
 			fl.Close();
 		}
 		
+		function startBattle(name){
+			var f = fs.CreateTextFile("data/saves/file9.save", true);
+			f.Write(JSON.stringify(pf));
+			f.Close();
+
+			setTimeout(function(){
+				shell.Run('cmd /c "battle.hta '+name+'"', 0);
+				window.close();
+			}, 400);
+		}
+		
 		function end(n){
 			if(n == 0){
 				shell.Run("gameover.hta");
@@ -381,18 +406,24 @@
 				var fl = fs.OpenTextFile("data/saves/file9.save", 2);
 				fl.Write(JSON.stringify(pf));
 				fl.Close();
-				
-				dialog([["Вы победили!"], ["Получено "+batt.drop.exp+" EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
+				if(batt.deathEvent) eval(batt.deathEvent);
+				if(!batt.deathEvent){
+					setTimeout(function(){
+						dialog([["Вы победили!"], ["Получено "+batt.drop.exp+" EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
+					}, 500);
+				}
 			}else if(n == 2){
 				pf.gold += batt.drop.gold;
 				if(pf.ending == "genocide") pf.ending = "neutral";
 				var fl = fs.OpenTextFile("data/saves/file9.save", 2);
 				fl.Write(JSON.stringify(pf));
 				fl.Close();
-				
-				setTimeout(function(){
-					dialog([["Вы победили!"], ["Получено 0 EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
-				}, 500);
+				if(batt.spareEvent) eval(batt.spareEvent);
+				if(!batt.spareEvent){
+					setTimeout(function(){
+						dialog([["Вы победили!"], ["Получено 0 EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
+					}, 500);
+				}
 			}
 		}
 	</script>

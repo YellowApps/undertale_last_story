@@ -24,7 +24,7 @@
 		font-style: normal;
 	}
 	.text{
-		font: 28px undertale;
+		font: 34px undertale;
 		color: white;
 	}
 	button{
@@ -113,18 +113,38 @@
 	<h1 class="text" style="text-align: center; font-size: 300%">НАСТРОЙКИ</h1>
 	<div style="padding: 23px;" class="text">
 		<!--<div style="clear: both; margin-bottom: 5px;">НАЗВАНИЕ<span class="option" style="float: right">ЗНАЧЕНИЕ</span></div>-->
-		<div style="clear: both; margin-bottom: 5px;">Язык<span class="option" style="float: right">Русский</span></div>
-		<div style="clear: both; margin-bottom: 5px;"><span class="option" style="float: right">ЗНАЧЕНИЕ</span></div>
+		<div style="clear: both; margin-bottom: 5px;">Громкость<span class="option" style="float: right"><input style="font-size: 34px;" id="vol" type="number" min="0" max="100" value="100" size="3"></span></div>
+		<div style="clear: both; margin-bottom: 5px;" id="importData" class="option">Импортировать данные</div>
 	</div>
 	<h1 style="visibility: hidden">padd</h1>
 	<center><button id="save" style="font-size: 42px;">Сохранить</button></center>
 	
 	<script>
+		var fs = WScript.CreateObject("Scripting.FileSystemObject");
 		var shell = WScript.CreateObject("WScript.Shell");
+		
+		var ofl = fs.OpenTextFile("data/options.json", 1);
+		var options = JSON.parse(ofl.ReadAll());
+		ofl.Close();
+		ofl = null;
+		
+		vol.value = options.volume*100;
 		
 		back.onclick = function(){
 			shell.Run("menu.hta");
 			window.close();
+		}
+		
+		importData.onclick = function(){
+			shell.Run("data\\importData.exe");
+		}
+		
+		save.onclick = function(){
+			options.volume = (+vol.value)/100;
+			
+			var ofl = fs.OpenTextFile("data/options.json", 2);
+			ofl.Write(JSON.stringify(options));
+			ofl.Close();
 		}
 	</script>
 </body>

@@ -1,10 +1,11 @@
-//undertail code)
-//ver: 0.0.1 (30.05.2022)
+//uls code
+//ver: 0.0.5 (03.07.2022)
 
 //БЛОК ПЕРЕМЕННЫХ
 //переменные wsh
 var shell = WScript.CreateObject("WScript.Shell");
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
+var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
 
 //холст
 var canvas = new Gl2Canvas("main-canvas", "black", 658, 478);
@@ -40,6 +41,7 @@ if(window.tmpsave && window.tmpsave.isRoom){
 if(room.music){
 	var a = new Audio(room.music);
 	a.loop = true;
+	a.volume = options.volume;
 	a.play();
 }
 

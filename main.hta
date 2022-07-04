@@ -103,7 +103,7 @@
   </script>
 </head>
 <body>
-	<h1 style="position: absolute; left: 200px; top: 100px; display: none; font: 34px undertale; text-align: center;" id="msgd"></h1>
+	<h1 style="position: absolute; left: 10px; top: 0px; padding: 20px; font: 34px undertale; text-align: center; border: solid 3px white; background: black; display: none; z-index: 9998" id="msgd"></h1>
 	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 300px; width: 610px; margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
 		<table><tr>
 			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80>&nbsp;&nbsp;</td><td id="dlgtxt"></td>
@@ -113,6 +113,7 @@
 	<script>
 		var shell = WScript.CreateObject("WScript.Shell");
 		var fs = WScript.CreateObject("Scripting.FileSystemObject");
+		var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
 		var fullscreen = false;
 		
 		var file0 = JSON.parse(fs.OpenTextFile("data/saves/file0.save", 1).ReadAll());
@@ -123,7 +124,7 @@
 		
 		window.onkeydown = function(e){
 			switch(e.key){
-				case "f":{
+				case "f": {
 					if(fullscreen){
 						resize(700, 550);
 					}else{
@@ -133,7 +134,7 @@
 					fullscreen = !fullscreen;
 					break;
 				}
-				case "Esc":{
+				case "Esc": {
 					shell.Run("menu.hta");
 					window.close();
 					break;

@@ -109,10 +109,16 @@
 	<script>
 		var fs = WScript.CreateObject("Scripting.FileSystemObject");
 		var shell = WScript.CreateObject("WScript.Shell");
+		var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
 		
 		var name = "";
 		var abc = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_.";
 		abc = abc.split("");
+		
+		var a = new Audio("data/music/menu.mp3");
+		a.loop = true;
+		a.volume = options.volume;
+		a.play();
 		
 		for(var i in abc){
 			lttrs.innerHTML += '<button onclick="addl(\'' + abc[i] + '\')">' + abc[i] + '</button>';
@@ -134,6 +140,13 @@
 			var f = fs.OpenTextFile("data/saves/file0.save", 2);
 			f.Write(JSON.stringify(file0));
 			f.Close();
+			
+			var file1 = JSON.parse(fs.OpenTextFile("data/saves/file1.save", 1).ReadAll());
+			file1.name = name;
+			
+			var f1 = fs.OpenTextFile("data/saves/file1.save", 2);
+			f1.Write(JSON.stringify(file1));
+			f1.Close();
 			
 			shell.Run("main.hta");
 			window.close();

@@ -6,7 +6,7 @@
 	"hp": 200,
 	"atk": 10,
 	"toSpare": 1,
-	"atkDelay": 10,
+	"atkDelay": 700,
 	"attacks": [
 		[
 			{"texture": "data/textures/entity/test/test.png", "size": [20, 80], "pos": [0, 0], "dir": "right", "steps": 200, "speed": 1},
