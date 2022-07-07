@@ -152,13 +152,13 @@
 				
 				var a = 0;
 				window.selbtn = 0;
-				setTimeout(function _(){
+				window.dtm = setTimeout(function _(){
 					dlgbtns.innerHTML = "";
 					dlgtxt.innerHTML += window.text[a];
 					
 					if(dlgtxt.innerHTML.length < window.text.length){
 						a++;
-						setTimeout(_, delay);
+						window.dtm = setTimeout(_, delay);
 					}else{
 						if(btns[i]){
 							for(var j in btns[i]){
@@ -231,6 +231,11 @@
 				var btn = btns[i];
 				if(!batt.buttons[i]) document.getElementById(btn).style.visibility = "hidden";
 			}
+		}
+		
+		if(pf.name == "temmie"){
+			pf.detemmienation = true;
+			pf.atk = batt.atk * 2;
 		}
 		
 		var cnv = new Gl2Canvas("", "black", 200, 160, document.getElementById("main"));
@@ -395,6 +400,7 @@
 		}
 		
 		function end(n){
+			clearTimeout(dtm);
 			if(n == 0){
 				shell.Run("gameover.hta");
 				window.close();
@@ -409,8 +415,9 @@
 				if(batt.deathEvent) eval(batt.deathEvent);
 				if(!batt.deathEvent){
 					setTimeout(function(){
+					clearTimeout(dtm);
 						dialog([["Вы победили!"], ["Получено "+batt.drop.exp+" EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
-					}, 500);
+					}, 0);
 				}
 			}else if(n == 2){
 				pf.gold += batt.drop.gold;
@@ -421,6 +428,7 @@
 				if(batt.spareEvent) eval(batt.spareEvent);
 				if(!batt.spareEvent){
 					setTimeout(function(){
+					clearTimeout(dtm);
 						dialog([["Вы победили!"], ["Получено 0 EXP и "+batt.drop.gold+" М."]], {}, {}, function(){ shell.Run("main.hta"); window.close() }, 70);
 					}, 500);
 				}
