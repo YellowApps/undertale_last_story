@@ -113,7 +113,7 @@
 	<h1 class="text" style="text-align: center; font-size: 300%">НАСТРОЙКИ</h1>
 	<div style="padding: 23px;" class="text">
 		<!--<div style="clear: both; margin-bottom: 5px;">НАЗВАНИЕ<span class="option" style="float: right">ЗНАЧЕНИЕ</span></div>-->
-		<div style="clear: both; margin-bottom: 5px;" id="grbone">Громкость<span class="option" style="float: right"><input style="font-size: 34px;" id="vol" type="number" min="0" max="100" value="100" size="3"></span></div>
+		<div style="clear: both; margin-bottom: 5px;"><span id="grbone">Громкость</span><span class="option" style="float: right"><input style="font-size: 34px;" id="vol" type="number" min="0" max="100" value="100" size="3"></span></div>
 	</div>
 	<h1 style="visibility: hidden">padd</h1>
 	<div style="clear: both; margin-bottom: 5px; padding: 23px;" id="importData" class="option text">Импортировать данные</div>
@@ -138,12 +138,16 @@
 		}
 		
 		grbone.onclick = function(){
-			grbone.innerHTML = "Гром<span style='color: yellow'>КОСТЬ</span>"+'<span class="option" style="float: right"><input style="font-size: 34px;" id="vol" type="number" min="0" max="100" value="100" size="3"></span>';
+			grbone.innerHTML = "Гром<span style='color: yellow'>КОСТЬ</span>";
 			sans.style.display = "block";
 			var a = new Audio("data/sounds/sansjoke.mp3");
 			a.volume = options.volume;
 			a.play();
-			
+			grbone.onclick = null;
+			setTimeout(function(){
+				grbone.innerHTML = "Гром<span style='color: white'>кость</span>";
+				sans.style.display = "none";
+			}, 3000);
 		}
 		
 		importData.onclick = function(){

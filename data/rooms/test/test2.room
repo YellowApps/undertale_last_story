@@ -1,0 +1,15 @@
+{
+	"spawn": [70, 70],
+	"background": "red",
+	"objects": [
+		{
+			"type": "object",
+			"x": 10,
+			"y": 10,
+			"width": 50,
+			"height": 100,
+			"data": {"name": "door1", "texture": "data/textures/object/test/test.png"},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.door1)) goToRoom('test/test');"
+		}
+	]
+}

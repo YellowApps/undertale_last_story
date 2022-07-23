@@ -1,0 +1,15 @@
+{
+	"name": "Гастер",
+	"texture": "data/textures/entity/gaster/gaster.png",
+	"music": "data/music/gaster_battle.mp3",
+	"texts": ["Гастер нападает на вас!", "У Гастера болит жопа,\nт.к. в ней есть фломастер", "Гастер хочет спиздить вашу ДУШУ."],
+	"description": "Фломастер в жопе.",
+	"hp": 1000000000,
+	"atk": 1000000000,
+	"toSpare": 1,
+	"atkDelay": 300,
+	"detemmienation": 0,
+	"attacks": null,
+	"actions": [],
+	"drop": {"exp": 999, "gold": 999}
+}

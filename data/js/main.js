@@ -1,4 +1,5 @@
-//uls code
+//uls code lol
+//ЯРИК ЛоШаРа!!!!!!!!!
 //ver: 0.0.5 (03.07.2022)
 
 //БЛОК ПЕРЕМЕННЫХ
@@ -6,10 +7,7 @@
 var shell = WScript.CreateObject("WScript.Shell");
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
 var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
-
-//холст
-var canvas = new Gl2Canvas("main-canvas", "black", 658, 478);
-canvas.init();
+var items = JSON.parse(fs.OpenTextFile("data/saves/items.json", 1).ReadAll());
 
 //БЛОК SAVE-ФАЙЛОВ
 //файл не найден
@@ -45,6 +43,10 @@ if(room.music){
 	a.play();
 }
 
+//холст
+var canvas = new Gl2Canvas("main-canvas", room.background, 658, 478);
+canvas.init();
+
 for(var i in room.objects){
 	var obj = room.objects[i];
 	var rand = new Date().getTime();
@@ -68,6 +70,12 @@ player.loadAnimations();
 player.draw(canvas);
 player.bind({left:"a",top:"w",right:"d",bottom:"s"}, 3, 400);
 
+if(room.script){
+	var scr = fs.OpenTextFile(room.script, 1);
+	eval(scr.ReadAll());
+	scr.Close();
+}
+
 //БЛОК ФУНКЦИЙ
 function message(text, dur){
 	msgd.style.display = "block";
@@ -87,7 +95,84 @@ function save(){
 	message("Файл сохранен", 1000);
 }
 
-function dialog(texts, img, btns, faft, delay){
+function dialog(texts, img, btns, funcs, faft, delay, voice, dbl){
+	var i = 0;
+	window.text = texts[0][0];
+	dlg.style.display = "block";
+	dlg.onclick = null;
+	window.onekydown = null;
+	
+	var aud;
+	if(voice){
+		aud = new Audio(voice);
+		aud.volume = options.volume;
+		aud.loop = true;
+	}
+	
+	if(img){
+		dlgimg.style.display = "inline";
+		dlgimg.src = img;
+	}else{
+		dlgimg.style.display = "none";
+	}
+	
+	function showText(){
+		dlgtxt.innerHTML = "";
+
+		var a = 0;
+		window.selbtn = 0;
+		window.dtm = setTimeout(function _(){
+			dlg.onclick = null;
+			window.onekydown = null;
+			dlgbtns.innerHTML = "";
+			dlgtxt.innerHTML += window.text[a];
+			if(voice) aud.play();
+			if(dlgtxt.innerHTML.length < window.text.length){
+				a++;
+				window.dtm = setTimeout(_, delay);
+			}else{
+				if(btns[i]){
+					for(var j in btns[i]){
+						var btn = btns[i][j];
+						var li = Math.floor(i+1);
+						window.texts = texts;
+						if(funcs[i] && !dbl){
+							dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='"+funcs[i][j]+"'>"+btn+"</button>";
+						}else if(funcs[i] && dbl){
+							dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='window.text = window.texts["+(li)+"]["+j+"]; "+funcs[i][j]+"'>"+btn+"</button>";
+						}else{
+							dlgbtns.innerHTML += "<button style='margin-left: 30px; margin-right: 30px' onclick='window.text = window.texts["+(li)+"]["+j+"]'>"+btn+"</button>";
+						}
+					}
+				}
+				
+				if(i >= texts.length){
+					if(voice) aud.pause(); 
+					dlg.onclick = function(){ dlg.style.display = "none"; faft(); };
+					window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeydown = keyDown;}
+				}else{
+					try{
+						if(!btns[i]) window.text = texts[i+1][0];
+						if(voice) aud.pause();
+						dlg.onclick = showText;
+						window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); }
+					}catch(e){
+						if(voice) aud.pause();
+						dlg.onclick = function(){ dlg.style.display = "none"; faft(); };
+						window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeydown = keyDown; }
+					}
+				}
+				i++;
+				
+				a = 0;
+				window.selbtn = 0;
+			}
+		}, delay);
+	}
+	showText();
+}
+
+function dialog_old(texts, img, btns, faft, delay){
 	var i = 0;
 	window.text = texts[0][0];
 	dlg.style.display = "block";
@@ -152,3 +237,142 @@ function battle(name){
 		window.close();
 	}, 400);
 }
+
+menuName.innerHTML = file.name;
+
+setInterval(function(){
+	menuStatsLV.innerHTML = file.level;
+	menuStatsHP.innerHTML = file.health;
+}, 300);
+
+var menuShowed = false;
+var menuItemsShowed = false;
+var menuStatsShowed = false;
+var menuDevModeShowed = false;
+var selectedItem = null;
+
+menuItemsBtn.onclick = function(){
+	menuItemsShowed = !menuItemsShowed;
+	menuItems.style.display = (menuItemsShowed?"block":"none");
+	
+	menuItemsDiv.innerHTML = "";
+	for(var i in items){
+		var item = items[i];
+		menuItemsDiv.innerHTML += "<button id='menuItemsItem"+i+"' onclick='selectItem("+i+")'>"+item.name+"</button><br>";
+	}
+}
+
+function setItems(){
+	var f = fs.OpenTextFile("data/saves/items.json", 2);
+	f.Write(JSON.stringify(items));
+	f.Close();
+}
+
+function selectItem(num){
+	selectedItem = num;
+	for(var i in items){
+		document.getElementById("menuItemsItem"+i).style.color = "white";
+	}
+	document.getElementById("menuItemsItem"+num).style.color = "yellow";
+}
+
+menuItemsUse.onclick = function(){
+	if(!selectedItem && typeof selectedItem != "number") return;
+	var item = items[selectedItem];
+	
+	var useText = "";
+	if(item.onuse) eval(item.onuse);
+	if(item.heal){
+		useText = "Вы съели "+item.name+".\nВы восстановили "+item.heal+" ОЗ!";
+		file.health += item.heal;
+		items.splice(selectedItem, 1);
+	}else if(item.atk){
+		useText = "Вы экипировали "+item.name+".\nВаша атака теперь равна "+item.atk+".";
+		file.atk = item.atk;
+		items.splice(selectedItem, 1);
+	}else{
+		useText = "Вы использовали "+item.name+".";
+		if(item.disposable) items.splice(selectedItem, 1);
+	}
+	dialog([[useText]], null, {}, {}, function(){}, 70, null, false);
+	setItems();
+	resetMenu();
+}
+
+menuItemsInfo.onclick = function(){
+	if(!selectedItem && typeof selectedItem != "number") return;
+	var item = items[selectedItem];
+	
+	var info = "";
+	if(item.onlyText){
+		info = item.infoText;
+	}else if(item.heal){
+		info = item.name+": Лечит "+item.heal+" ОЗ."
+	}else if(item.atk){
+		info = item.name+": Оружие "+item.atk+" АТК."
+	}
+	if(item.infoText) info += "\n"+item.infoText;
+	
+	resetMenu();
+	dialog([[info]], null, {}, {}, function(){}, 70, null, false);
+}
+
+menuItemsDrop.onclick = function(){
+	if(!selectedItem && typeof selectedItem != "number") return;
+	
+	resetMenu();
+	items.splice(selectedItem, 1);
+	setItems();
+}
+
+menuStatsBtn.onclick = function(){
+	menuStatsShowed = !menuStatsShowed;
+	menuStats.style.display = (menuStatsShowed?"block":"none");
+	
+	menuStats.innerHTML = file.name+"<br>УР: "+file.level+"<br>ОЗ: "+file.health+"<br>EXP: "+file.exp+"<br>АТК: "+file.atk+"<br>Монеты: "+file.gold
+}
+
+menuDevModeBtn.onclick = function(){
+	menuDevModeShowed = !menuDevModeShowed;
+	menuDevMode.style.display = (menuDevModeShowed?"block":"none");
+}
+
+function resetMenu(){
+	menuShowed = false;
+	menu.style.display = "none";
+	menuItems.style.display = "none";
+	menuStats.style.display = "none";
+	menuDevMode.style.display = "none";
+	menuItemsShowed = false;
+	menuStatsShowed = false;
+	menuDevModeShowed = false;
+	selectedItem = null;
+}
+
+if(!file.devMode) menuDevModeBtn.style.display = "none";
+
+function keyDown(e){
+	if(e.key == "Enter"){
+		for(var i in Gl2Objects){
+			var obj = Gl2Objects[i];
+			if(player.isCollided("any", obj) && obj.onclickFunc){
+				obj.onclickFunc();
+				break;
+			}
+		}
+	}else if(e.key == "c"){
+		menuShowed = !menuShowed;
+		menu.style.display = (menuShowed?"block":"none");
+		if(!menuShowed){
+			menuItems.style.display = "none";
+			menuStats.style.display = "none";
+			menuDevMode.style.display = "none";
+			menuItemsShowed = false;
+			menuStatsShowed = false;
+			menuDevModeShowed = false;
+			selectedItem = null;
+		}
+	}
+}
+
+window.onkeydown = keyDown;

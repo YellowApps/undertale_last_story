@@ -1,0 +1,17 @@
+{
+	"script": "data/js/rooms/other/start.js",
+	"spawn": [300, 400],
+	"music": null,
+	"background": "black",
+	"objects": [
+		{
+			"type": "entity",
+			"x": 300,
+			"y": 150,
+			"width": 100,
+			"height": 100,
+			"data": {"name": "xtemmie", "texture": "data/textures/entity/temmie/xtemmie.png", "animation": {"left": ["data/textures/entity/temmie/xtemmie.png","data/textures/entity/temmie/xtemmie.png"],"right": ["data/textures/entity/temmie/xtemmie.png","data/textures/entity/temmie/xtemmie.png"],"top": ["data/textures/entity/temmie/xtemmie.png","data/textures/entity/temmie/xtemmie.png"],"bottom": ["data/textures/entity/temmie/xtemmie.png","data/textures/entity/temmie/xtemmie.png"]}},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.xtemmie)) dialog([['Прив!\\nЯ Темми!'], ['Ты наебнулся в дыру, не так ли?'], ['Не боись, я проведу тебя!'], ['Ну вот и хорошо! Пойдём!', 'А? Флауи?\\nОн пошёл хавать души людей.']], null, {2: ['Круто', 'А где Флауи?']}, {}, function(){ Gl2Objects.xtemmie.move('top', 4, 10, 50, function(){Gl2Objects.xtemmie.kill()}) }, 60, 'data/sounds/voice/temmie.mp3', false);"
+		}
+	]
+}

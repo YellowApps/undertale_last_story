@@ -8,7 +8,7 @@
 	"informationReplacement": "Отказано в доступе.",
 	"hp": -1,
 	"atk": 99999999999,
-	"toSpare": 1,
+	"toSpare": 0,
 	"atkDelay": 300,
 	"detemmienation": 1,
 	"attacks": [
@@ -33,5 +33,6 @@
 	],
 	"drop": {"exp": -1, "gold": -1},
 	"deathEvent": "alert('Ты еблан? Тебе же сказали, что НЕ ПОЛУЧИТСЯ!!!'); startBattle('xtemmie')",
-	"disableDefaultDeathEvent": 1
+	"disableDefaultDeathEvent": 1,
+	"buttons": [0, 1, 1, 1]
 }

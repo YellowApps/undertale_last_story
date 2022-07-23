@@ -1,0 +1,16 @@
+{
+	"spawn": [300, 475],
+	"music": "data/music/ruins.mp3",
+	"background": "#9e479f",
+	"objects": [
+		{
+			"type": "object",
+			"x": 10,
+			"y": 10,
+			"width": 50,
+			"height": 100,
+			"data": {"name": "example", "texture": "data/textures/object/test/test.png"},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.example)) return;"
+		}
+	]
+}

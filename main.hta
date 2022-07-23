@@ -29,7 +29,7 @@
 		color: white;
 	}
 	button{
-		font: 28px undertale;
+		font: 34px undertale;
 		color: white;
 		background: black;
 		border: none;
@@ -104,11 +104,41 @@
 </head>
 <body>
 	<h1 style="position: absolute; left: 10px; top: 0px; padding: 20px; font: 34px undertale; text-align: center; border: solid 3px white; background: black; display: none; z-index: 9998" id="msgd"></h1>
-	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 300px; width: 610px; margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
+	<!--div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 300px; width: 610px; margin: 10px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
 		<table><tr>
 			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80>&nbsp;&nbsp;</td><td id="dlgtxt"></td>
 		</tr></table>
 		<div id="dlgbtns" style="text-align: center"></div>
+	</div-->
+	<div style="display: none; background: black; z-index: 9999; cursor: pointer; position: absolute; left: 10px; top: 270px; width: 610px; height: 170px; margin: 10px; margin-top: 3px; padding: 10px; font: 34px undertale; border: solid 3px white;" id="dlg">
+		<table><tr>
+			<td><img src="data/textures/placeholder/black.png" id="dlgimg" width=80 height=80 ondrag="return false">&nbsp;&nbsp;</td><td id="dlgtxtr"><pre id="dlgtxt" style="font: 34px undertale; color: white; background: black;"></pre></td>
+		</tr></table>
+		<div id="dlgbtns" style="text-align: center; position: absolute; left: 20px; top: 143px;"></div>
+	</div>
+	<div id="menu" style="display: none; background: black; padding: 7px; color: white; font: 34px undertale; border: solid 3px white; z-index: 9999; position: absolute; left: 10px; top: 10px; width: 170px; height: 210px;">
+		<div id="menuName">GOVNOED228</div>
+		<div id="menuStat" style="font: 20px undertale;">УР: <span id="menuStatsLV">1</span>&nbsp;&nbsp;03: <span id="menuStatsHP">1</span></div><br>
+		<button id="menuItemsBtn" style="font: 38px undertale;">ВЕЩИ</button><br>
+		<button id="menuStatsBtn" style="font: 38px undertale;">СТАТ</button><br>
+		<button id="menuDevModeBtn" style="font: 38px undertale;">DEVMODE</button><br>
+	</div>
+	<div id="menuItems" style="display: none; background: black; padding: 7px; color: white; font: 34px undertale; border: solid 3px white; z-index: 9999; position: absolute; left: 210px; top: 10px; width: 300px; height: 400px; ">
+		<button id="menuItemsUse">ИСП</button> <button id="menuItemsInfo">ИНФО</button> <button id="menuItemsDrop">МУСОР</button><br><br>
+		<div id="menuItemsDiv"></div>
+	</div>
+	<div id="menuStats" style="display: none; background: black; padding: 7px; color: white; font: 34px undertale; border: solid 3px white; z-index: 9999; position: absolute; left: 210px; top: 10px; width: 250px; height: 260px; ">
+	
+	</div>
+	<div id="menuDevMode" style="display: none; background: black; padding: 7px; color: white; font: 34px undertale; border: solid 3px white; z-index: 9999; position: absolute; left: 210px; top: 10px; width: 400px; height: 400px; ">
+		<!--<button onclick="; resetMenu();"></button><br>-->
+		<button onclick="save(); resetMenu();">СОХРАНИТЬ</button><br>
+		<button onclick="location.reload(); resetMenu();">ЗАГРУЗИТЬ</button><br>
+		<button onclick="shell.Run('notepad data/saves/file1.save'); resetMenu();">РЕДАКТИРОВАТЬ SAVE</button><br>
+		<button onclick="goToRoom(prompt('Введите ID комнаты', file.room)); resetMenu();">ТЕЛЕПОРТ</button><br>
+		<button onclick="file.detemmienation = true; resetMenu();">НЕУЯЗВИМОСТЬ</button><br>
+		<button onclick="shell.Popup('coord='+player.x+' '+player.y+'\nroom='+file.room+'\nGl2Objects=['+Object.keys(Gl2Objects).join(', ')+']\n', 0, 'Данные для отладки', 0); resetMenu();">ДАННЫЕ ДЛЯ ОТЛАДКИ</button><br>
+		<button onclick="try{eval(prompt('Введите команду:', ''));}catch(e){shell.Popup(e.name+': '+e.message, 0, 'Ошибка', 16);} resetMenu();">ВЫПОЛНИТЬ КОМАНДУ</button><br>
 	</div>
 	<script>
 		var shell = WScript.CreateObject("WScript.Shell");

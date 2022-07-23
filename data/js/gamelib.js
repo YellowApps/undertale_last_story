@@ -40,6 +40,7 @@ function Gl2Object(x, y, w, h, d){
   }
   
   this.onclick = function(func){
+	  this.onclickFunc = func;
 	  this.clicked = true;
 	  var name = d.name;
 	  
