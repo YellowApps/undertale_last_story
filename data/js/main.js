@@ -53,22 +53,22 @@ for(var i in room.objects){
 	if(obj.type == "object"){
 		var o = new Gl2Object(obj.x, obj.y, obj.width, obj.height, obj.data);
 		o.draw(canvas);
-		o.onclick(eval("(function(){" + obj.onclick + "})"));
+		if(obj.onclick) o.onclick(eval("(function(){ if(Gl2Objects.player.isCollided('any', Gl2Objects."+obj.data.name+"))" + obj.onclick + "; })"));
 	}else if(obj.type == "entity"){
 		var e = new Gl2Entity(obj.x, obj.y, obj.width, obj.height, obj.data);
 		e.loadAnimations();
 		e.draw(canvas);
-		e.onclick(eval("(function(){" + obj.onclick + "})"));
+		if(obj.onclick) e.onclick(eval("(function(){ if(Gl2Objects.player.isCollided('any', Gl2Objects."+obj.data.name+"))" + obj.onclick + "; })"));
 	}
 }
 //ОСНОВНОЙ БЛОК
 
 //создание и настройка игрока
 
-var player = new Gl2Entity(file.x, file.y, 75, 75, {name: "player", texture: "data/textures/entity/player/player.png", health: file.health, animation: {left: ["data/textures/entity/player/animation/left1.png","data/textures/entity/player/animation/left2.png"], top: ["data/textures/entity/player/animation/top1.png","data/textures/entity/player/animation/top2.png"], right: ["data/textures/entity/player/animation/right1.png","data/textures/entity/player/animation/right2.png"], bottom: ["data/textures/entity/player/animation/bottom1.png","data/textures/entity/player/animation/bottom2.png"]}});
+var player = new Gl2Entity(file.x, file.y, 50, 75, {name: "player", texture: "data/textures/entity/player/player.png", health: file.health, animation: {left: ["data/textures/entity/player/animation/left1.png","data/textures/entity/player/animation/left2.png"], top: ["data/textures/entity/player/animation/top1.png","data/textures/entity/player/animation/top2.png"], right: ["data/textures/entity/player/animation/right1.png","data/textures/entity/player/animation/right2.png"], bottom: ["data/textures/entity/player/animation/bottom1.png","data/textures/entity/player/animation/bottom2.png"]}});
 player.loadAnimations();
 player.draw(canvas);
-player.bind({left:"a",top:"w",right:"d",bottom:"s"}, 3, 400);
+player.bind({left:"Left",top:"Up",right:"Right",bottom:"Down"}, 3, 400);
 
 if(room.script){
 	var scr = fs.OpenTextFile(room.script, 1);
@@ -92,6 +92,9 @@ function save(){
 	f.Write(JSON.stringify(file));
 	f.Close();
 	
+	var a = new Audio("data/sounds/save.mp3");
+	a.play();
+	
 	message("Файл сохранен", 1000);
 }
 
@@ -102,12 +105,10 @@ function dialog(texts, img, btns, funcs, faft, delay, voice, dbl){
 	dlg.onclick = null;
 	window.onekydown = null;
 	
-	var aud;
-	if(voice){
-		aud = new Audio(voice);
-		aud.volume = options.volume;
-		aud.loop = true;
-	}
+	if(!voice) voice = "data/sounds/voice/default.mp3";
+	var aud = new Audio(voice);
+	aud.loop = true;
+	aud.play();
 	
 	if(img){
 		dlgimg.style.display = "inline";
@@ -118,15 +119,15 @@ function dialog(texts, img, btns, funcs, faft, delay, voice, dbl){
 	
 	function showText(){
 		dlgtxt.innerHTML = "";
-
+		aud.play();
 		var a = 0;
 		window.selbtn = 0;
 		window.dtm = setTimeout(function _(){
 			dlg.onclick = null;
-			window.onekydown = null;
+			window.onkeyup = null;
 			dlgbtns.innerHTML = "";
 			dlgtxt.innerHTML += window.text[a];
-			if(voice) aud.play();
+			
 			if(dlgtxt.innerHTML.length < window.text.length){
 				a++;
 				window.dtm = setTimeout(_, delay);
@@ -147,19 +148,19 @@ function dialog(texts, img, btns, funcs, faft, delay, voice, dbl){
 				}
 				
 				if(i >= texts.length){
-					if(voice) aud.pause(); 
+					aud.pause();
 					dlg.onclick = function(){ dlg.style.display = "none"; faft(); };
-					window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeydown = keyDown;}
+					window.onkeyup = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeyup = keyDown;}
 				}else{
 					try{
 						if(!btns[i]) window.text = texts[i+1][0];
-						if(voice) aud.pause();
+						aud.pause();
 						dlg.onclick = showText;
-						window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); }
+						if(!btns[i]) window.onkeyup = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeyup = keyDown;}
 					}catch(e){
-						if(voice) aud.pause();
+						aud.pause();
 						dlg.onclick = function(){ dlg.style.display = "none"; faft(); };
-						window.onkeydown = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeydown = keyDown; }
+						window.onkeyup = function(e){if(e.key == "Enter") dlg.onclick(); window.onkeyup = keyDown;}
 					}
 				}
 				i++;
@@ -372,7 +373,10 @@ function keyDown(e){
 			menuDevModeShowed = false;
 			selectedItem = null;
 		}
+	}else if(e.key == "Esc"){
+		shell.Run("menu.hta");
+		window.close();
 	}
 }
 
-window.onkeydown = keyDown;
+window.onkeyup = keyDown;

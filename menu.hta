@@ -103,36 +103,57 @@
 		<img src="data/textures/interface/logo.png" ondrag="return false">
 		<div class="text" style="font-size: 52px; color: red">Last Story</div>
 		<h1 style="visibility: hidden">padd</h1>
-		<button id="play" style="font-size: 54px;">Играть</button><br><br>
-		<button id="opts" style="font-size: 54px;">Настройки</button><br><br>
-		<button id="exit" style="font-size: 54px;">Выход</button>
+		<div id="btns">
+			<button id="play" style="font-size: 54px;">Играть</button><br><br>
+			<button id="opts" style="font-size: 54px;">Настройки</button><br><br>
+			<button id="exit" style="font-size: 54px;">Выход</button>
+		</div>
 	</center>
-	<div class="text" style="top: calc(100% - 18px); font-size: 16px; color: gray; position: absolute;">Создано t.me/nekit270 и iaronim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Версия 0.0.6 от 04.07.2022</div>
+	<div class="text" style="top: calc(100% - 18px); font-size: 16px; color: gray; position: absolute;">Создано t.me/nekit270 и iaronim&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Версия 0.1.7 (24.07.2022)</div>
 	
-	<img id="img0" src="" style="display: none" width="100%" height="100%">
+	<img id="img0" src="data/textures/interface/bg1.png" style="display: none" width="100%" height="100%">
 	<script>
 		var shell = WScript.CreateObject("WScript.Shell");
 		var fs = WScript.CreateObject("Scripting.FileSystemObject");
 		var options = JSON.parse(fs.OpenTextFile("data/options.json", 1).ReadAll());
 		
 		menu.style.display = "none";
-		img0.style.display = "block;"
+		img0.style.display = "block";
 		
-		var a = new Audio("data/music/menu.mp3");
+		var a = new Audio("data/music/story.mp3");
 		a.loop = true;
 		a.volume = options.volume;
 		a.play();
 		
-		var img = 1;
+		var img = 2;
 		setTimeout(function _(){
 			img0.src = "data/textures/interface/bg" + img + ".png";
 			
 			img++;
-			if(img < 4) setTimeout(_, 2000);
-		}, 2000);
-		
-		img0.style.display = "none";
-		menu.style.display = "block";
+			if(img < 4){
+				setTimeout(_, 5000);
+			}else{
+				img0.style.display = "none";
+				a.pause();
+				
+				btns.style.display = "none";
+				
+				setTimeout(function(){
+					menu.style.display = "block";
+					var a1 = new Audio("data/sounds/intronoise.mp3");
+					a1.volume = options.volume;
+					a1.play();
+					
+					setTimeout(function(){
+						btns.style.display = "block";
+						var a1 = new Audio("data/music/menu.mp3");
+						a1.loop = true;
+						a1.volume = options.volume;
+						a1.play();
+					}, 3700);
+				}, 1000);
+			}
+		}, 5000);
 		
 		play.onclick = function(){
 			shell.Run("main.hta");

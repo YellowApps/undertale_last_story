@@ -1,0 +1,16 @@
+{
+	"spawn": [0, 0],
+	"music": null,
+	"background": "black",
+	"objects": [
+		{
+			"type": "object",
+			"x": 10,
+			"y": 10,
+			"width": 50,
+			"height": 100,
+			"data": {"name": "example", "texture": "data/textures/object/test/test.png"},
+			"onclick": "if(Gl2Objects.player.isCollided('any', Gl2Objects.example)) return;"
+		}
+	]
+}

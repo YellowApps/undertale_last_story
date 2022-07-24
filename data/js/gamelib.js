@@ -167,7 +167,7 @@ function Gl2Entity(x, y, w, h, d){
   ent.bind = function(keys, pixels, delay){
     this.binded = true; this.bindKeys = keys; this.bindPixels = pixels; this.bindDelay = delay;
     var currObj = this;
-    window.onkeypress = function(e){
+    window.onkeydown = function(e){
       if(e.key == keys.left) currObj.move("left", pixels, delay);
       if(e.key == keys.right) currObj.move("right", pixels, delay);
       if(e.key == keys.top) currObj.move("top", pixels, delay);
